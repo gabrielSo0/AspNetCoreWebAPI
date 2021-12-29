@@ -6,15 +6,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using SmartSchool.WebAPI.Data;
 namespace SmartSchool.WebAPI
 {
     public class Startup
     {
+        // Injeção de configuração. No caso, a possibilidade de acessar meu appSettings.
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,6 +27,13 @@ namespace SmartSchool.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Vou explicar para o services quem é o contexto responsável por gerenciar minha conexão com o banco de dados.
+            // Adicionando um contexto
+            services.AddDbContext<SmartContext>(
+                // Usando a Configuration para acessar a conection string
+                context => context.UseSqlite(Configuration.GetConnectionString("Default"))
+            );
+
             services.AddControllers();
         }
 
